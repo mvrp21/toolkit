@@ -1,0 +1,21 @@
+
+FROM sharelatex/sharelatex
+
+# We want full LaTeX support
+RUN tlmgr install scheme-full && tlmgr path add
+
+COPY services/web/app/src/Features/Authentication/AuthenticationController.js /overleaf/services/web/app/src/Features/Authentication/AuthenticationController.js
+COPY services/web/app/src/infrastructure/Server.js /overleaf/services/web/app/src/infrastructure/Server.js
+COPY services/web/app/src/router.js /overleaf/services/web/app/src/router.js
+COPY services/web/app/views/user/login.pug /overleaf/services/web/app/views/user/login.pug
+COPY services/web/app/src/Features/User/UserPagesController.js /overleaf/services/web/app/src/Features/User/UserPagesController.js
+# Why is the pt locale incomplete? idk
+# TODO: do a full en.json -> pt.json locale translation (merge request maybe?)
+COPY services/web/locales/pt.json /overleaf/services/web/locales/pt.json
+
+WORKDIR /overleaf/services/web/
+
+# TODO: better to make npm ci work here
+RUN npm i passport-openidconnect
+
+WORKDIR /overleaf/

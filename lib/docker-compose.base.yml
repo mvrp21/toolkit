@@ -1,10 +1,13 @@
 ---
-version: '2.2'
+# version: '2.2'
 services:
 
     sharelatex:
         restart: always
-        image: "${IMAGE}"
+        build:
+          context: ../patches/
+          dockerfile: Dockerfile.sharelatex
+        # image: "${IMAGE}"
         container_name: sharelatex
         volumes:
             - "${OVERLEAF_DATA_PATH}:${OVERLEAF_IN_CONTAINER_DATA_PATH}"

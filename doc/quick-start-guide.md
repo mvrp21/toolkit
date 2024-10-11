@@ -97,6 +97,14 @@ $ bin/up
 You should see some log output from the docker containers, indicating that the containers are running. 
 If you press `CTRL-C` at the terminal, the services will shut down. You can start them up again (without attaching to the log output) by running `bin/start`. More generally, you can run `bin/docker-compose` to control the `docker compose` system directly, if you find that the convenience scripts don't cover your use-case.
 
+Note: this fork comes with a `Dockerfile` to generate the sharelatex image on demand. It's necessary to build it:
+
+```sh
+$ bin/up --build
+```
+
+This might take a while, it runs `tlmgr install scheme-full && tlmgr path add` (once done that thogh this layer should be cached).
+
 
 ## Create the first admin account
 
