@@ -23,3 +23,5 @@ services:
         env_file:
             - ../config/variables.env
         stop_grace_period: 60s
+        sysctls:
+          - net.ipv6.conf.all.disable_ipv6=1

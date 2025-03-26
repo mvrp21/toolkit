@@ -98,7 +98,6 @@ const AuthenticationController = {
   },
 
   oidcLogin(req, res, next) {
-    logger.err({}, 'ALGUMA COISA ELE FEXZZZZZZ')
     passport.authenticate('openidconnect')(req, res, next)
   },
 
@@ -108,24 +107,15 @@ const AuthenticationController = {
       successReturnToOrRedirect: '/',
       failureRedirect: '/login'
     }, async function(err, user, _) {
-    logger.err({}, '????????????????????????????????????????????????????????????????????????????????????')
       if (!user)
         return res.status(401).json({redir:'/'});
-      if (err) {
-        logger.err({err}, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AAAAAAAAAAAAAA')
+      if (err)
         return next(err);
-      }
       try {
         // I have no idea what these do, I just copied the passportLogin below pretty much
         await Modules.promises.hooks.fire('saasLogin', { email: user.email }, req);
         await AuthenticationController.promises.finishLogin(user, req, res);
       } catch (err) {
-        console.log("AAAAAAAAA")
-        console.log("AAAAAAAAA")
-        console.error(err);
-        logger.err({err}, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BBBBBBBBBBBBBB')
-        console.log("AAAAAAAAA")
-        console.log("AAAAAAAAA")
         return next(err)
       }
     })(req,res,next)
@@ -391,6 +381,7 @@ const AuthenticationController = {
         return AuthenticationController._redirectToLoginOrRegisterPage(req, res)
       } else {
         req.user = SessionManager.getSessionUser(req.session)
+        req.logger?.addFields({ userId: req.user._id })
         return next()
       }
     }
@@ -672,7 +663,7 @@ function _afterLoginSessionSetup(req, user, callback) {
 const _afterLoginSessionSetupAsync = promisify(_afterLoginSessionSetup)
 
 function _loginAsyncHandlers(req, user, anonymousAnalyticsId, isNewUser) {
-  UserHandler.setupLoginData(user, err => {
+  UserHandler.populateTeamInvites(user, err => {
     if (err != null) {
       logger.warn({ err }, 'error setting up login data')
     }

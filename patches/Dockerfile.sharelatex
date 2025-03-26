@@ -1,14 +1,18 @@
-
-FROM sharelatex/sharelatex
+FROM sharelatex/sharelatex:5.3.3
 
 # We want full LaTeX support
-RUN tlmgr install scheme-full && tlmgr path add
+COPY update-tlmgr-latest.sh update-tlmgr-latest.sh
+RUN sh update-tlmgr-latest.sh
+
+# Note: this little manouver will cost you a few years
+# RUN tlmgr install scheme-full && tlmgr path add
 
 COPY services/web/app/src/Features/Authentication/AuthenticationController.js /overleaf/services/web/app/src/Features/Authentication/AuthenticationController.js
-COPY services/web/app/src/infrastructure/Server.js /overleaf/services/web/app/src/infrastructure/Server.js
-COPY services/web/app/src/router.js /overleaf/services/web/app/src/router.js
+COPY services/web/app/src/infrastructure/Server.mjs /overleaf/services/web/app/src/infrastructure/Server.mjs
+COPY services/web/app/src/router.mjs /overleaf/services/web/app/src/router.mjs
 COPY services/web/app/views/user/login.pug /overleaf/services/web/app/views/user/login.pug
-COPY services/web/app/src/Features/User/UserPagesController.js /overleaf/services/web/app/src/Features/User/UserPagesController.js
+COPY services/web/app/src/Features/User/UserPagesController.mjs /overleaf/services/web/app/src/Features/User/UserPagesController.mjs
+
 # Why is the pt locale incomplete? idk
 # TODO: do a full en.json -> pt.json locale translation (merge request maybe?)
 COPY services/web/locales/pt.json /overleaf/services/web/locales/pt.json
